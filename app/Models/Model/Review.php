@@ -9,8 +9,8 @@ class Review extends Model
 {
     use HasFactory;
 
-    public function reviews()
+    public function product()
     {
-        return $this->hasMany(Review::class);
+        return $this->belongsTo(Product::class);
     }
 }
