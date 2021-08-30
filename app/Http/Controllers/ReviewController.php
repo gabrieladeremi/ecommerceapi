@@ -78,19 +78,26 @@ class ReviewController extends Controller
      * @param  \App\Models\Model\Review  $review
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, Review $review)
+    public function update(Request $request, Product $product, Review $review)
     {
-        //
+        $review->update($request->all());
+
+        return response([
+            'data' => new ReviewResource($review)
+        ], Response::HTTP_CREATED);
     }
 
     /**
      * Remove the specified resource from storage.
      *
      * @param  \App\Models\Model\Review  $review
+     * @param  \App\Models\Model\Product $product
      * @return \Illuminate\Http\Response
      */
-    public function destroy(Review $review)
+    public function destroy(Product $product, Review $review)
     {
-        //
+        $review->delete();
+
+        return response(null, Response::HTTP_NOT_FOUND);
     }
 }
