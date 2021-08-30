@@ -2,11 +2,13 @@
 
 namespace App\Http\Controllers;
 
+use App\Exceptions\ProductNotBelongsToUser;
 use App\Http\Requests\ProductRequest;
 use App\Http\Resources\Product\ProductResource;
 use App\Models\Model\Product;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Symfony\Component\HttpFoundation\Response;
 use App\Http\Resources\Product\ProductCollection;
 
@@ -94,8 +96,10 @@ class ProductController extends Controller
      * @param  \App\Models\Model\Product  $product
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, Product $product): JsonResponse
+    public function update(Request $request, Product $product)
     {
+
+        $this->ProductUserCheck($product);
 
         $request['detail'] = $request->description;
 
@@ -116,8 +120,18 @@ class ProductController extends Controller
      */
     public function destroy(Product $product): JsonResponse
     {
+        $this->ProductUserCheck($product);
+
         $product->delete();
 
         return response(null, Response::HTTP_NO_CONTENT);
+    }
+
+    public function ProductUserCheck($product)
+    {
+        if(Auth::id() != $product->user_id) {
+
+            throw new ProductNotBelongsToUser;
+        }
     }
 }
